@@ -1,31 +1,44 @@
-const express = require('express'),
-router = express.Router();
+const express = require("express"),
+  router = express.Router();
 const {
-    getAllBootcamps,
-    getBootcamp,
-    createBootcamp, 
-    deleteBootcamp,
-    updateBootcamp
-} = require('../controllers/bootcamps');
+  getAllBootcamps,
+  getBootcamp,
+  createBootcamp,
+  deleteBootcamp,
+  updateBootcamp,
+  getBootcampsInRadius,
+} = require("../controllers/bootcamps");
+const { getCourses, addCourse } = require("../controllers/courses");
 
-//Get all bootcamps
-//GET /api/v1/bootcamps
-router.get('/',getAllBootcamps)
-//Get single bootcamp
+//Re-route into other resource routers
+router.get("/:bootcampId/courses", getCourses);
+router.post("/:bootcampId/courses", addCourse);
 
-//GET /api/v1/bootcamps/:id
-router.get('/:id',getBootcamp)
+router
+  //Get bootcamps by distance
+  //GET /api/v1/bootcamps
+  .route("/radius/:zipcode/:distance")
+  .get(getBootcampsInRadius);
 
-//Create a new bootcamp
-//POST /api/v1/bootcamps/
-router.post('/',createBootcamp)
+router
+  .route("/")
+  //Get all bootcamps
+  //GET /api/v1/bootcamps
+  .get(getAllBootcamps)
+  //Create a new bootcamp
+  //POST /api/v1/bootcamps/
+  .post(createBootcamp);
 
-//Update a bootcamp
-//PUT /api/v1/bootcamps/:id
-router.put('/:id',updateBootcamp)
-
-//Delete a bootcamp
-//DELETE /api/v1/bootcamps/:id
-router.delete('/:id', deleteBootcamp)
+router
+  .route("/:id")
+  //Get single bootcamp
+  //GET /api/v1/bootcamps/:id
+  .get(getBootcamp)
+  //Update a bootcamp
+  //PUT /api/v1/bootcamps/:id
+  .put(updateBootcamp)
+  //Delete a bootcamp
+  //DELETE /api/v1/bootcamps/:id
+  .delete(deleteBootcamp);
 
 module.exports = router;
