@@ -6,12 +6,20 @@ const {
   updateCourse,
   deleteCourse,
 } = require("../controllers/courses");
+const advancedFiltering = require("../middleware/advancedFiltering");
+const Course = require("../models/Course");
 
 router
   .route("/")
   //Fetch all courses
   //GET /api/v1/courses
-  .get(getCourses);
+  .get(
+    advancedFiltering(Course, {
+      path: "bootcamp",
+      select: "name description",
+    }),
+    getCourses
+  );
 
 router
   .route("/:id")

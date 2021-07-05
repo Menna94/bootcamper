@@ -8,37 +8,25 @@ const Bootcamp = require("../models/Bootcamp");
 //@route    GET /api/v1/bootcamps/:bootcampId/courses
 //@access   public
 exports.getCourses = asyncHandler(async (req, res, next) => {
-  let query;
   const bootcampId = req.params.bootcampId;
 
   if (bootcampId) {
-    //if there's a bootcamp ID, fetch courses in that bootcamp
-    //@route    GET /api/v1/bootcamps/:bootcampId/courses
-    query = Course.find({ bootcamp: bootcampId });
+    const courses = await Course.find({ bootcamp: bootcampId });
+    if (courses) {
+      return res.status(200).send({
+        success: true,
+        count: courses.length,
+        data: courses,
+      });
+    }
+    res.status(404).send({
+      success: false,
+      messgae: "Couldn't Fetch Courses!",
+      data: null,
+    });
   } else {
-    //get all courses
-    //@route    GET /api/v1/courses
-    query = Course.find().populate({
-      path: "bootcamp",
-      select: "name description",
-    });
+    return res.status(200).send(res.advancedFiltering);
   }
-
-  const courses = await query;
-
-  if (courses) {
-    return res.status(200).send({
-      success: true,
-      messgae: "All Courses Fetched Successfully",
-      count: courses.length,
-      data: courses,
-    });
-  }
-  res.status(404).send({
-    success: false,
-    messgae: "Couldn't Fetch Courses!",
-    data: null,
-  });
 });
 
 //@desc     Fetch single course
