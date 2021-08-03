@@ -8,6 +8,7 @@ const {
 } = require("../controllers/courses");
 const advancedFiltering = require("../middleware/advancedFiltering");
 const Course = require("../models/Course");
+const { protect, authRoles } = require("../middleware/auth");
 
 router
   .route("/")
@@ -28,9 +29,9 @@ router
   .get(getCourse)
   //Update a course
   //PUT /api/v1/courses/:id
-  .put(updateCourse)
+  .put(protect, authRoles("publisher", "admin"), updateCourse)
   //Delete a course
   //DELETE /api/v1/courses/:id
-  .delete(deleteCourse);
+  .delete(protect, authRoles("publisher", "admin"), deleteCourse);
 
 module.exports = router;
